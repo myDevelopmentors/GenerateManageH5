@@ -46,12 +46,12 @@ public class LoginController {
 			return "redirect:/index";
 		}
 	
-		model.addAttribute("error","1001");
+		model.addAttribute("msg","1001");
 		return "system/login"; // forward 到 system/login.jsp
 	}
 	
 	/**
-	 * 打开登录页面
+	 * 打开主页面
 	 * @param request
 	 * @param response
 	 * @return

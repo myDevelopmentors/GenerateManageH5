@@ -27,14 +27,12 @@
 
   <body class="login">
     <div>
-      <a class="hiddenanchor" id="signup"></a>
-      <a class="hiddenanchor" id="signin"></a>
-
       <div class="login_wrapper">
         <div class="animate form login_form">
           <section class="login_content">
             <form id="loginForm">
               <h1>Login Form</h1>
+              <font id="msg_tip" color="#FF0000"></font>
               <div>
                 <input type="text" name="username" class="form-control" placeholder="Username" required="" />
               </div>
@@ -43,14 +41,14 @@
               </div>
               <div>
                 <button type="submit" form="loginForm" class="btn btn-default submit" formaction="${ctx}/login" formmethod="post">Log in</button>
-                <a class="reset_pass" href="#">Lost your password?</a>
+                <a class="reset_pass" id = "lost_pass" >Lost your password?</a>
               </div>
 
               <div class="clearfix"></div>
 
               <div class="separator">
                 <p class="change_link">New to site?
-                  <a href="#signup" class="to_register"> Create Account </a>
+                  <a href="${ctx}/register" class="to_register"> Create Account </a>
                 </p>
 
                 <div class="clearfix"></div>
@@ -65,42 +63,26 @@
           </section>
         </div>
 
-        <div id="register" class="animate form registration_form">
-          <section class="login_content">
-            <form id="registerForm">
-              <h1>Create Account</h1>
-              <div>
-                <input type="text" class="form-control" placeholder="Username" required="" />
-              </div>
-              <div>
-                <input type="email" class="form-control" placeholder="Email" required="" />
-              </div>
-              <div>
-                <input type="password" class="form-control" placeholder="Password" required="" />
-              </div>
-              <div>
-              	<button type="submit" form="registerForm" class="btn btn-default submit" formaction="${ctx}/register" formmethod="post">Submit</button>
-              </div>
-
-              <div class="clearfix"></div>
-
-              <div class="separator">
-                <p class="change_link">Already a member ?
-                  <a href="#signin" class="to_register"> Log in </a>
-                </p>
-
-                <div class="clearfix"></div>
-                <br />
-
-                <div>
-                  <h1><i class="fa fa-paw"></i>  Generate Font System!</h1>
-                  <p>©2018 All Rights Reserved. Generate Font System! is a Bootstrap 3 template. Privacy and Terms</p>
-                </div>
-              </div>
-            </form>
-          </section>
-        </div>
+        <c:choose>
+			<c:when test="${msg eq '1001'}">
+				<script>
+					$("#msg_tip").html("用户名或密码错误，请重试");
+				</script>
+			</c:when>
+			<c:when test="${msg eq '2000'}">
+				<script>
+					$("#msg_tip").html("注册成功，请登录");
+				</script>
+			</c:when>
+	    </c:choose>
       </div>
     </div>
   </body>
+  <script type="text/javascript">
+      $(function(){
+    	  $('#lost_pass').click(function(){
+    		  alert('Please contract to administrator!');
+    	  });
+      })
+  </script>
 </html>
