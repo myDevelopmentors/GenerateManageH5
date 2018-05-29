@@ -1,64 +1,106 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-<head>
-	<title>管理系统</title>
-	<script src="${ctx}/static/plugins/easyui/jquery/jquery-1.11.1.min.js"></script>
-	<link rel="stylesheet" type="text/css" href="${ctx}/static/css/bglogin.css" />
-	<script>
-	var captcha;
-	function refreshCaptcha(){  
-	    document.getElementById("img_captcha").src="${ctx}/static/images/kaptcha.jpg?t=" + Math.random();  
-	}  
-	</script>
-</head>
-<body>
-	<div>
-	<form id="loginForm" action="${ctx}/login" method="post">
-		<div class="login_top">
-			<div class="login_title">
-				管理系统登录
-			</div>
-		</div>
-		<div style="float:left;width:100%;">
-			<div class="login_main">
-				<div class="login_main_top"></div>
-				<div class="login_main_errortip">&nbsp;</div>
-				<div class="login_main_ln">
-					<input type="text" id="username" name="username" value="admin"/>
-				</div>
-				<div class="login_main_pw">
-					<input type="password" id="password" name="password" value=""/>
-				</div>
-				
-				<div class="login_main_yzm">
-				<!-- 
-					<div>
-					<input type="text" id="captcha" name="captcha"/>
-					<img alt="验证码" src="${ctx}/static/images/kaptcha.jpg" title="点击更换" id="img_captcha" onclick="javascript:refreshCaptcha();" style="height:45px;width:85px;float:right;margin-right:98px;"/>
-					</div>
-				</div>
-				 -->
-				<div class="login_main_submit">
-					<button onclick=""></button>
-				</div>
-			</div>
-		</div>
-	</form>
-	</div>
-	<c:choose>
-		<c:when test="${error eq '1001'}">
-			<script>
-				$(".login_main_errortip").html("用户名或密码错误，请重试");
-			</script>
-		</c:when>
-		<c:when test="${error eq '1002'}">
-			<script>
-				$(".login_main_errortip").html("验证码错误，请重试");
-			</script>
-		</c:when>
-	</c:choose>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Welcome to System | </title>
+	<script src="${ctx}/static/plugins/jquery/jquery-1.11.1.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="${ctx}/static/plugins/bootstrap3/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="${ctx}/static/plugins/bootstrap3/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="${ctx}/static/plugins/bootstrap3/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="${ctx}/static/plugins/bootstrap3/vendors/animate.css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="${ctx}/static/plugins/bootstrap3/build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="login">
+    <div>
+      <a class="hiddenanchor" id="signup"></a>
+      <a class="hiddenanchor" id="signin"></a>
+
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+          <section class="login_content">
+            <form id="loginForm">
+              <h1>Login Form</h1>
+              <div>
+                <input type="text" name="username" class="form-control" placeholder="Username" required="" />
+              </div>
+              <div>
+                <input type="password" name="password" class="form-control" placeholder="Password" required="" />
+              </div>
+              <div>
+                <button type="submit" form="loginForm" class="btn btn-default submit" formaction="${ctx}/login" formmethod="post">Log in</button>
+                <a class="reset_pass" href="#">Lost your password?</a>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="separator">
+                <p class="change_link">New to site?
+                  <a href="#signup" class="to_register"> Create Account </a>
+                </p>
+
+                <div class="clearfix"></div>
+                <br />
+
+                <div>
+                  <h1><i class="fa fa-paw"></i> Generate Font System!</h1>
+                  <p>©2018 All Rights Reserved. Generate Font System! is a Bootstrap 3 template. Privacy and Terms</p>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <div id="register" class="animate form registration_form">
+          <section class="login_content">
+            <form id="registerForm">
+              <h1>Create Account</h1>
+              <div>
+                <input type="text" class="form-control" placeholder="Username" required="" />
+              </div>
+              <div>
+                <input type="email" class="form-control" placeholder="Email" required="" />
+              </div>
+              <div>
+                <input type="password" class="form-control" placeholder="Password" required="" />
+              </div>
+              <div>
+              	<button type="submit" form="registerForm" class="btn btn-default submit" formaction="${ctx}/register" formmethod="post">Submit</button>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="separator">
+                <p class="change_link">Already a member ?
+                  <a href="#signin" class="to_register"> Log in </a>
+                </p>
+
+                <div class="clearfix"></div>
+                <br />
+
+                <div>
+                  <h1><i class="fa fa-paw"></i>  Generate Font System!</h1>
+                  <p>©2018 All Rights Reserved. Generate Font System! is a Bootstrap 3 template. Privacy and Terms</p>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
