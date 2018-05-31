@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.UserAccountMapper" >
+
+  <resultMap id="BaseResultMap" type="com.myproject.model.UserAccount" >
+    <id column="USER_ID" property="userId" jdbcType="DECIMAL" />
+ 	<result column="USER_CODE" property="userCode" jdbcType="VARCHAR" />
+    <result column="DEPARTMENT_ID" property="departmentId" jdbcType="INTEGER" /> 
+    <result column="NAME" property="name" jdbcType="VARCHAR" />   
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="SALT" property="salt" jdbcType="VARCHAR" />
+    <result column="PW" property="pw" jdbcType="VARCHAR" />
+    <result column="OPENDATE" property="opendate" jdbcType="TIMESTAMP" />
+    <result column="ACCOUNT_EXPIRE" property="accountExpire" jdbcType="DECIMAL" />
+    <result column="PW_EXPIRE" property="pwExpire" jdbcType="DECIMAL" />
+    <result column="LAST_LOG" property="lastLog" jdbcType="TIMESTAMP" />
+    <result column="LAST_PW" property="lastPw" jdbcType="TIMESTAMP" />
+    <result column="PW_ERROR_COUNT" property="pwErrorCount" jdbcType="DECIMAL" />
+    <result column="LOG_REC" property="logRec" jdbcType="DECIMAL" />
+    <result column="OP_REC" property="opRec" jdbcType="DECIMAL" />
+    <result column="LOCK_DATETIME" property="lockDatetime" jdbcType="TIMESTAMP" />
+    <result column="UNLOCK_DATETIME" property="unlockDatetime" jdbcType="TIMESTAMP" />
+    <result column="CREATOR_USER_ID" property="creatorUserId" jdbcType="DECIMAL" />
+    <result column="CREATE_DATETIME" property="createDatetime" jdbcType="TIMESTAMP" />
+    <result column="LAST_OP_USER_ID" property="lastOpUserId" jdbcType="DECIMAL" />
+    <result column="LAST_OP_DATETIME" property="lastOpDatetime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="CANCEL_DATETIME" property="cancelDatetime" jdbcType="TIMESTAMP" />
+  </resultMap>	
+
+  <resultMap id="UserRolePermissionMap" type="com.myproject.model.UserAccount" >
+    <id column="USER_ID" property="userId" jdbcType="DECIMAL" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+  	<result column="DEPARTMENT_ID" property="departmentId" jdbcType="INTEGER" /> 
+    <result column="NAME" property="name" jdbcType="VARCHAR" />      
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="SALT" property="salt" jdbcType="VARCHAR" />
+    <result column="PW" property="pw" jdbcType="VARCHAR" />
+    <result column="OPENDATE" property="opendate" jdbcType="TIMESTAMP" />
+    <result column="ACCOUNT_EXPIRE" property="accountExpire" jdbcType="DECIMAL" />
+    <result column="PW_EXPIRE" property="pwExpire" jdbcType="DECIMAL" />
+    <result column="LAST_LOG" property="lastLog" jdbcType="TIMESTAMP" />
+    <result column="LAST_PW" property="lastPw" jdbcType="TIMESTAMP" />
+    <result column="PW_ERROR_COUNT" property="pwErrorCount" jdbcType="DECIMAL" />
+    <result column="LOG_REC" property="logRec" jdbcType="DECIMAL" />
+    <result column="OP_REC" property="opRec" jdbcType="DECIMAL" />
+    <result column="LOCK_DATETIME" property="lockDatetime" jdbcType="TIMESTAMP" />
+    <result column="UNLOCK_DATETIME" property="unlockDatetime" jdbcType="TIMESTAMP" />
+    <result column="CREATOR_USER_ID" property="creatorUserId" jdbcType="DECIMAL" />
+    <result column="CREATE_DATETIME" property="createDatetime" jdbcType="TIMESTAMP" />
+    <result column="LAST_OP_USER_ID" property="lastOpUserId" jdbcType="DECIMAL" />
+    <result column="LAST_OP_DATETIME" property="lastOpDatetime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="CANCEL_DATETIME" property="cancelDatetime" jdbcType="TIMESTAMP" />
+  
+    <collection property="permissionsList" column="USER_ID" javaType="ArrayList" 
+         ofType="com.myproject.model.Permission" 
+         select="getPermissionsByUserId"/>
+         
+    <collection property="rolesList" column="USER_ID" javaType="ArrayList" 
+         ofType="com.myproject.model.Role" 
+         select="getRolesByUserId"/>         
+  
+  </resultMap>
+  
+   <resultMap id="PermissionResultMap" type="com.myproject.model.Permission" >
+    <id column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+    <result column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="DECIMAL" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="REQUEST_METHOD" property="requestMethod" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <resultMap id="RoleResultMap" type="com.myproject.model.Role" >
+    <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="ROLE_TYPE" property="roleType" jdbcType="DECIMAL" />
+    <collection property="permissionsList" column="ROLE_ID" javaType="ArrayList" 
+         ofType="com.besttone.bass.service.model.security.Permission" 
+         select="getPermissionsByRoleId"/>
+  </resultMap>
+  
+  <select id="getPermissionsByUserId" resultMap="PermissionResultMap" parameterType="java.lang.Integer">
+  	
+  		select  p.PRIVILEGE_ID, 
+  		        p.PRIVILEGE_CODE, 
+  		        p.PRIVILEGE_GROUP_ID, 
+  		        p.ORD, 
+  		        p.NAME, 
+  		        p.DESCRIPTION, 
+  		        p.STATUS, 
+                p.LINK, 
+                p.REQUEST_METHOD
+        from PRIVILEGE p        
+  	    left join AP ap on p.PRIVILEGE_ID = ap.PRIVILEGE_ID 
+  	    left join USER_ACCOUNT ua on ap.USER_ID = ua.USER_ID 
+  		where ua.USER_ID = #{userId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="getRolesByUserId" resultMap="RoleResultMap" parameterType="java.lang.Integer">
+  		select 	r.ROLE_ID,
+  				r.ROLE_CODE,
+  				r.NAME,
+  				r.DESCRIPTION,
+  				r.ROLE_TYPE
+  				from ROLE r 
+  		left join AR ar on r.ROLE_ID = ar.ROLE_ID
+  		left join USER_ACCOUNT ua on ar.USER_ID = ua.USER_ID 
+  		where ua.USER_ID = #{userId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="getPermissionsByRoleId" resultMap="PermissionResultMap" parameterType="java.lang.Integer">
+  		select 
+  		       p.PRIVILEGE_ID,
+  		       p.PRIVILEGE_CODE,
+  		       p.ORD,
+  		       p.NAME,
+  		       p.DESCRIPTION,
+  		       p.STATUS,
+  		       p.LINK,
+  		       p.REQUEST_METHOD
+  		from PRIVILEGE p 
+  		left join ROLE_PRIV rp on p.PRIVILEGE_ID = rp.PRIVILEGE_ID  
+  		left join ROLE r on r.ROLE_ID = rp.ROLE_ID 
+  	    where r.ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>  
+
+  <sql id="Base_Column_List" >
+    USER_ID,USER_CODE,DEPARTMENT_ID, NAME,USERNAME, DESCRIPTION, SALT, PW, OPENDATE, ACCOUNT_EXPIRE, PW_EXPIRE, LAST_LOG, 
+    LAST_PW, PW_ERROR_COUNT, LOG_REC, OP_REC, LOCK_DATETIME, UNLOCK_DATETIME, CREATOR_USER_ID, 
+    CREATE_DATETIME, LAST_OP_USER_ID, LAST_OP_DATETIME, STATUS, CANCEL_DATETIME
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from USER_ACCOUNT
+    where USER_ID = #{userId,jdbcType=DECIMAL} and STATUS = 1 
+  </select>
+  
+  <select id="selectByUserName" resultMap="UserRolePermissionMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from USER_ACCOUNT
+    where USERNAME = #{username,jdbcType=VARCHAR} and STATUS = 1 
+  </select>
+  
+  <select id="selectUserAccoutWithRolesAndPermissions" resultMap="UserRolePermissionMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+    from USER_ACCOUNT
+    where USER_ID = #{userId,jdbcType=DECIMAL} and STATUS = 1 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from USER_ACCOUNT
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </delete>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="userId" parameterType="com.myproject.model.UserAccount" >
+    insert into USER_ACCOUNT (USER_ID, USER_CODE,NAME,DEPARTMENT_ID,USERNAME, DESCRIPTION, 
+      SALT, PW, OPENDATE, 
+      ACCOUNT_EXPIRE, PW_EXPIRE, LAST_LOG, 
+      LAST_PW, PW_ERROR_COUNT, LOG_REC, 
+      OP_REC, LOCK_DATETIME, UNLOCK_DATETIME, 
+      CREATOR_USER_ID, CREATE_DATETIME, LAST_OP_USER_ID, 
+      LAST_OP_DATETIME, STATUS, CANCEL_DATETIME
+      )
+    values (#{userId,jdbcType=DECIMAL}, #{userCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{departmentId,jdbcType=DECIMAL},#{username,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{salt,jdbcType=VARCHAR}, #{pw,jdbcType=VARCHAR}, #{opendate,jdbcType=TIMESTAMP}, 
+      #{accountExpire,jdbcType=DECIMAL}, #{pwExpire,jdbcType=DECIMAL}, #{lastLog,jdbcType=TIMESTAMP}, 
+      #{lastPw,jdbcType=TIMESTAMP}, #{pwErrorCount,jdbcType=DECIMAL}, #{logRec,jdbcType=DECIMAL}, 
+      #{opRec,jdbcType=DECIMAL}, #{lockDatetime,jdbcType=TIMESTAMP}, #{unlockDatetime,jdbcType=TIMESTAMP}, 
+      #{creatorUserId,jdbcType=DECIMAL}, #{createDatetime,jdbcType=TIMESTAMP}, #{lastOpUserId,jdbcType=DECIMAL}, 
+      #{lastOpDatetime,jdbcType=TIMESTAMP}, #{status,jdbcType=DECIMAL}, #{cancelDatetime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="resetPassword" >
+	    update USER_ACCOUNT
+	    set 
+	      SALT = #{salt,jdbcType=VARCHAR},
+	      PW = #{password,jdbcType=VARCHAR}
+	 	where USER_ID = #{userId,jdbcType=DECIMAL}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.UserAccount" >
+    update USER_ACCOUNT
+    set 
+      USER_CODE = #{userCode,jdbcType=VARCHAR},
+      DEPARTMENT_ID = #{departmentId,jdbcType=DECIMAL},
+	  NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR}
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </update>
+  
+
+  <select id="findList" resultMap="UserRolePermissionMap" parameterType="com.myproject.model.UserAccount">
+  	select 
+    <include refid="Base_Column_List" />
+    from USER_ACCOUNT 
+    where 1=1 
+    <if test="username != null and username != ''">
+			AND USERNAME like CONCAT('%', #{username}, '%') 
+	</if>
+    <if test="description != null and description != ''">
+			AND DESCRIPTION like CONCAT('%', #{description}, '%') 
+	</if>	
+ 	<choose>
+		<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+			ORDER BY ${page.orderBy}
+		</when>
+		<otherwise>
+			ORDER BY USER_ID
+		</otherwise>
+	</choose>   
+  </select>
+  <select id="findAllList" resultMap="UserRolePermissionMap" >
+  	select 
+    <include refid="Base_Column_List" />
+    from USER_ACCOUNT 
+ 	<choose>
+		<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+			ORDER BY ${page.orderBy}
+		</when>
+		<otherwise>
+			ORDER BY USER_ID
+		</otherwise>
+	</choose>   
+  </select> 
+  
+  
+  
+</mapper>

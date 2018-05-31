@@ -81,7 +81,7 @@
   <script type="text/javascript">
       $(function(){
     	  $('#lost_pass').click(function(){
-    		  alert('Please contract to administrator!');
+            alert('Please contract to administrator!');
     	  });
       })
   </script>

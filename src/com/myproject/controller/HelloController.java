@@ -15,10 +15,9 @@ public class HelloController {
     @Autowired
     private HelloService helloService;
     
-    @RequestMapping(value="/hello", method=RequestMethod.GET)
-    public String hello(HttpServletRequest request, HttpServletResponse response) {
-    	String name = helloService.hello();
-    	request.setAttribute("helloname", name);
-    	return "hello";
-    }
+    @RequestMapping(value="/hello",method=RequestMethod.GET)
+	public String toLogin(HttpServletRequest request, HttpServletResponse response) {
+		//logger.debug("...login...");
+		return "system/index2";
+	}
 }

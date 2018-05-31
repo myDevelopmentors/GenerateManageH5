@@ -27,7 +27,7 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
-     			user define context...
+     			user define context 2...
         </div>
         <!-- /page content -->
 

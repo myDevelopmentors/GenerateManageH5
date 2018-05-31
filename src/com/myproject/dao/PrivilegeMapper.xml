@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.PrivilegeMapper" >
+  <resultMap id="BaseResultMap" type="com.myproject.model.Privilege" >
+    <id column="PRIVILEGE_ID" property="privilegeId" jdbcType="INTEGER" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+    <result column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="INTEGER" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="INTEGER" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="REQUEST_METHOD" property="requestMethod" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PRIVILEGE_ID, PRIVILEGE_CODE, PRIVILEGE_GROUP_ID, ORD, NAME, DESCRIPTION, STATUS, 
+    LINK, REQUEST_METHOD
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from PRIVILEGE
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from PRIVILEGE
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.myproject.model.Privilege" >
+    insert into PRIVILEGE (PRIVILEGE_ID, PRIVILEGE_CODE, PRIVILEGE_GROUP_ID, 
+      ORD, NAME, DESCRIPTION, 
+      STATUS, LINK, REQUEST_METHOD
+      )
+    values (#{privilegeId,jdbcType=INTEGER}, #{privilegeCode,jdbcType=VARCHAR}, #{privilegeGroupId,jdbcType=INTEGER}, 
+      #{ord,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{link,jdbcType=VARCHAR}, #{requestMethod,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.Privilege" >
+    update PRIVILEGE
+    set PRIVILEGE_CODE = #{privilegeCode,jdbcType=VARCHAR},
+      PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=INTEGER},
+      ORD = #{ord,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      LINK = #{link,jdbcType=VARCHAR},
+      REQUEST_METHOD = #{requestMethod,jdbcType=INTEGER}
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=INTEGER}
+  </update>
+</mapper>

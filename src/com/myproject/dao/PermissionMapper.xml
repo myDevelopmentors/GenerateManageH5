@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.PermissionMapper" >
+  
+  <resultMap id="BaseResultMap" type="com.myproject.model.Permission" >
+    <id column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+    <result column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="DECIMAL" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="REQUEST_METHOD" property="requestMethod" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    PRIVILEGE_ID, PRIVILEGE_CODE, PRIVILEGE_GROUP_ID, ORD, NAME, DESCRIPTION, STATUS, 
+    LINK, REQUEST_METHOD
+  </sql>
+ 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from PRIVILEGE
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </select>
+ 
+  <select id="selectPermissionByPrivilegeCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from PRIVILEGE
+    where PRIVILEGE_CODE = #{privilegeCode,jdbcType=VARCHAR}
+  </select>
+ 
+  <select id="findPermissionByMenuId" resultType="com.myproject.model.Permission" parameterType="java.lang.Short">
+ 		select 
+	 		p.PRIVILEGE_ID as privilegeId,
+	 		p.PRIVILEGE_GROUP_ID as privilegeCode,
+	 		p.ORD as ord,
+	 		p.NAME as name,
+	 		p.DESCRIPTION as description,
+	 		p.STATUS as status,
+	 		p.LINK as link,
+	 		p.REQUEST_METHOD as requestMethod 
+	 		from PRIVILEGE p 
+        left join FUNC_TREE ft on p.PRIVILEGE_CODE = ft.PRIVILEGE_CODE
+  </select>
+ 
+  <select id="findAllPermissions" resultType="com.myproject.model.FuncTree">
+		select     
+		   ft.FUNC_TREE_ID as funcTreeId, 
+		   ft.F_ID as fId,
+		   ft.F_ID AS "parent.fId", 
+		   ft.CODE as code, 
+		   ft.ORD as ord, 
+		   ftb.NAME AS "parent.name", 
+		   ft.NAME as name, 
+		   ft.DESCRIPTION as description, 
+		   ft.OPEN_ICON as openIcon, 
+		   ft.CLOSE_ICON as closeIcon, 
+		   ft.DISP as disp, 
+		   ft.STATUS as status, 
+		   ft.PRIVILEGE_CODE as privilegeCode,p.LINK as "permission.link"   
+		   from FUNC_TREE ft   
+		left join FUNC_TREE ftb on ftb.FUNC_TREE_ID = ft.F_ID 
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE 
+		order by ftb.ORD,ft.ORD  
+  </select>
+ 
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from PRIVILEGE
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </delete>
+ 
+  <insert id="insert" useGeneratedKeys="true" keyProperty="privilegeId" parameterType="com.myproject.model.Permission" >
+    insert into PRIVILEGE (PRIVILEGE_ID, PRIVILEGE_CODE, PRIVILEGE_GROUP_ID, 
+      ORD, NAME, DESCRIPTION, 
+      STATUS, LINK, REQUEST_METHOD
+      )
+    values (#{privilegeId,jdbcType=DECIMAL}, #{privilegeCode,jdbcType=VARCHAR}, #{privilegeGroupId,jdbcType=DECIMAL}, 
+      #{ord,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{status,jdbcType=DECIMAL}, #{link,jdbcType=VARCHAR}, #{requestMethod,jdbcType=DECIMAL}
+      )
+  </insert>
+ 
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.Permission" >
+    update PRIVILEGE
+    set PRIVILEGE_CODE = #{privilegeCode,jdbcType=VARCHAR},
+      PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=DECIMAL},
+      ORD = #{ord,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=DECIMAL},
+      LINK = #{link,jdbcType=VARCHAR},
+      REQUEST_METHOD = #{requestMethod,jdbcType=DECIMAL}
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </update>
+  
+</mapper>

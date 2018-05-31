@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.PrivilegeGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.myproject.model.PrivilegeGroup" >
+    <id column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="DECIMAL" />
+    <result column="F_ID" property="fId" jdbcType="DECIMAL" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  
+ <resultMap id="PermissionResultMap" type="com.myproject.model.Permission" >
+    <id column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+    <result column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="DECIMAL" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="REQUEST_METHOD" property="requestMethod" jdbcType="DECIMAL" />
+  </resultMap>  
+  
+
+  <select id="getPermissionsByPrivilegeGroupId" resultMap="PermissionResultMap" parameterType="java.lang.Short">
+  		select  PRIVILEGE_ID, 
+  		        PRIVILEGE_CODE, 
+  		        PRIVILEGE_GROUP_ID, 
+  		        ORD, 
+  		        NAME, 
+  		        DESCRIPTION, 
+  		        STATUS, 
+                LINK, 
+                REQUEST_METHOD
+        from PRIVILEGE         
+  	    where PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=DECIMAL}
+  </select>  
+  
+  <sql id="Base_Column_List" >
+    PRIVILEGE_GROUP_ID, F_ID, CODE, ORD, NAME, DESCRIPTION
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from PRIVILEGE_GROUP
+    where PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=DECIMAL}
+  </select>
+   
+  
+   <select id="findAllPermissionGroup" resultType="com.myproject.model.PrivilegeGroup">
+		SELECT  PRIVILEGE_GROUP_ID as privilegeGroupId,
+			    F_ID as fId,
+			    ORD as ord,
+			    NAME as name       
+		from PRIVILEGE_GROUP 
+		order by PRIVILEGE_GROUP_ID
+  </select>
+  
+   <select id="findAllPermissionGroupV2" resultType="com.myproject.model.PrivilegeGroup">
+		 SELECT  PRIVILEGE_GROUP_ID as privilegeGroupId,
+			       F_ID as fId,
+			       ORD as ord,
+			       NAME as name       
+		  from PRIVILEGE_GROUP 
+		  union all 
+		  SELECT  (PRIVILEGE_ID+800) as privilegeGroupId,
+			       PRIVILEGE_GROUP_ID as fId,
+			       ORD as ord,
+			       NAME as name
+		  from PRIVILEGE 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from PRIVILEGE_GROUP
+    where PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="privilegeGroupId" parameterType="com.myproject.model.PrivilegeGroup" >
+    insert into PRIVILEGE_GROUP (PRIVILEGE_GROUP_ID, F_ID, CODE, 
+      ORD, NAME, DESCRIPTION
+      )
+    values (#{privilegeGroupId,jdbcType=DECIMAL}, #{fId,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR}, 
+      #{ord,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.PrivilegeGroup" >
+    update PRIVILEGE_GROUP
+    set F_ID = #{fId,jdbcType=DECIMAL},
+      CODE = #{code,jdbcType=VARCHAR},
+      ORD = #{ord,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR}
+    where PRIVILEGE_GROUP_ID = #{privilegeGroupId,jdbcType=DECIMAL}
+  </update>
+</mapper>

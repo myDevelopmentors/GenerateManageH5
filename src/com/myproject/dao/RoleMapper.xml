@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.RoleMapper" >
+  
+  <resultMap id="BaseResultMap" type="com.myproject.model.Role" >
+    <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="ROLE_TYPE" property="roleType" jdbcType="DECIMAL" />
+    
+    <collection property="permissionsList" column="ROLE_ID" javaType="ArrayList" 
+         ofType="com.besttone.bass.service.model.security.Permission" 
+         select="getPermissionsByRoleId"/>
+    
+  </resultMap>
+  
+  <resultMap id="PermissionResultMap" type="com.myproject.model.Permission" >
+    <id column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+    <result column="PRIVILEGE_GROUP_ID" property="privilegeGroupId" jdbcType="DECIMAL" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="LINK" property="link" jdbcType="VARCHAR" />
+    <result column="REQUEST_METHOD" property="requestMethod" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <select id="getPermissionsByRoleId" resultMap="PermissionResultMap" parameterType="java.lang.Integer">
+  		select 
+  		       p.PRIVILEGE_ID,
+  		       p.PRIVILEGE_CODE,
+  		       p.ORD,
+  		       p.NAME,
+  		       p.DESCRIPTION,
+  		       p.STATUS,
+  		       p.LINK,
+  		       p.REQUEST_METHOD
+  		from PRIVILEGE p 
+  		left join ROLE_PRIV rp on p.PRIVILEGE_ID = rp.PRIVILEGE_ID  
+  		left join ROLE r on r.ROLE_ID = rp.ROLE_ID 
+  	    where r.ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <sql id="Base_Column_List" >
+    ROLE_ID, ROLE_CODE, NAME, DESCRIPTION, ROLE_TYPE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from ROLE
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findRoles" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ROLE order by ROLE_ID 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from ROLE
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="roleId" parameterType="com.myproject.model.Role" >
+    insert into ROLE (ROLE_ID, ROLE_CODE, NAME, 
+      DESCRIPTION, ROLE_TYPE)
+    values (#{roleId,jdbcType=DECIMAL}, #{roleCode,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{roleType,jdbcType=DECIMAL})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.Role" >
+    update ROLE
+    set ROLE_CODE = #{roleCode,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      ROLE_TYPE = #{roleType,jdbcType=DECIMAL}
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </update>
+  
+</mapper>

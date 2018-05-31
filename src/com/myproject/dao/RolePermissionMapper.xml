@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.RolePermissionMapper" >
+  
+  <resultMap id="BaseResultMap" type="com.myproject.model.RolePermission" >
+    <id column="ROLE_PRIV_ID" property="rolePrivId" jdbcType="DECIMAL" />
+    <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="OPERABLE" property="operable" jdbcType="DECIMAL" />
+    <result column="GRANTABLE" property="grantable" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ROLE_PRIV_ID, ROLE_ID, PRIVILEGE_ID, OPERABLE, GRANTABLE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ROLE_PRIV
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      select 
+      <include refid="Base_Column_List" />
+      from ROLE_PRIV
+      where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectByPrivilegeId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+   		select 
+	      <include refid="Base_Column_List" />
+	      from ROLE_PRIV
+	      where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findPermissionIdsV2" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		SELECT  PRIVILEGE_GROUP_ID as privilegeGroupId
+		from PRIVILEGE_GROUP 
+		union all 	  
+	  	select (p.PRIVILEGE_ID+800) as privilegeId from PRIVILEGE p 
+	       left join ROLE_PRIV rp on rp.PRIVILEGE_ID = p.PRIVILEGE_ID
+	       left join ROLE r on r.ROLE_ID = rp.ROLE_ID
+	    where r.ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findPermissionIdsV3" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select PRIVILEGE_GROUP_ID as  privilegeGroupId from (
+			select a.PRIVILEGE_GROUP_ID,a.F_ID,a.NAME from (
+			select (p.PRIVILEGE_ID+800) as PRIVILEGE_GROUP_ID,p.PRIVILEGE_GROUP_ID as F_ID,p.NAME  from  PRIVILEGE p 
+			left join ROLE_PRIV rp on p.PRIVILEGE_ID = rp.PRIVILEGE_ID
+			left join ROLE r on rp.ROLE_ID = r.ROLE_ID where r.ROLE_ID = #{roleId,jdbcType=DECIMAL}  and p.STATUS&lt;4
+		) a
+		union all 
+			select pg.PRIVILEGE_GROUP_ID,pg.F_ID,pg.NAME from PRIVILEGE_GROUP pg 
+			where pg.PRIVILEGE_GROUP_ID in (
+			select p.PRIVILEGE_GROUP_ID from  PRIVILEGE p 
+			left join ROLE_PRIV rp on p.PRIVILEGE_ID = rp.PRIVILEGE_ID
+			left join ROLE r on rp.ROLE_ID = r.ROLE_ID where r.ROLE_ID = #{roleId,jdbcType=DECIMAL}  and p.STATUS&lt;4
+		)
+		union all  
+		SELECT PRIVILEGE_GROUP_ID,F_ID,NAME from PRIVILEGE_GROUP where PRIVILEGE_GROUP_ID in (
+		select pg.F_ID from PRIVILEGE_GROUP pg 
+		where pg.PRIVILEGE_GROUP_ID in (
+		select p.PRIVILEGE_GROUP_ID from  PRIVILEGE p 
+		left join ROLE_PRIV rp on p.PRIVILEGE_ID = rp.PRIVILEGE_ID
+		left join ROLE r on rp.ROLE_ID = r.ROLE_ID where r.ROLE_ID = #{roleId,jdbcType=DECIMAL} and p.STATUS&lt;4
+			) )
+		) tb  
+  
+  </select>
+  
+  <select id="findPermissionIdsIfEmptyPerm" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  	  	select (p.PRIVILEGE_ID+800) as privilegeId from PRIVILEGE p 
+	       left join ROLE_PRIV rp on rp.PRIVILEGE_ID = p.PRIVILEGE_ID
+	       left join ROLE r on r.ROLE_ID = rp.ROLE_ID
+	    where r.ROLE_ID = #{roleId,jdbcType=DECIMAL} and p.STATUS&lt;4
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ROLE_PRIV
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=DECIMAL}
+  </delete>
+  
+  <delete id="deleteByRoleIdPermId">
+      delete from ROLE_PRIV
+      where ROLE_ID = #{roleId,jdbcType=DECIMAL} 
+      and PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="rolePrivId" parameterType="com.myproject.model.RolePermission" >
+    insert into ROLE_PRIV (ROLE_PRIV_ID, ROLE_ID, PRIVILEGE_ID, 
+      OPERABLE, GRANTABLE)
+    values (#{rolePrivId,jdbcType=DECIMAL}, #{roleId,jdbcType=DECIMAL}, #{privilegeId,jdbcType=DECIMAL}, 
+      #{operable,jdbcType=DECIMAL}, #{grantable,jdbcType=DECIMAL})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.RolePermission" >
+    update ROLE_PRIV
+    set ROLE_ID = #{roleId,jdbcType=DECIMAL},
+      PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL},
+      OPERABLE = #{operable,jdbcType=DECIMAL},
+      GRANTABLE = #{grantable,jdbcType=DECIMAL}
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=DECIMAL}
+  </update>
+  
+</mapper>

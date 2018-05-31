@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.ApMapper" >
+  <resultMap id="BaseResultMap" type="com.myproject.model.Ap" >
+    <id column="AP_ID" property="apId" jdbcType="DECIMAL" />
+    <result column="USER_ID" property="userId" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_ID" property="privilegeId" jdbcType="DECIMAL" />
+    <result column="GRANTOR" property="grantor" jdbcType="DECIMAL" />
+    <result column="OPERABLE" property="operable" jdbcType="DECIMAL" />
+    <result column="GRANTABLE" property="grantable" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    AP_ID, USER_ID, PRIVILEGE_ID, GRANTOR, OPERABLE, GRANTABLE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AP
+    where AP_ID = #{apId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectByPrivilegeId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from AP 
+	    where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AP
+    where AP_ID = #{apId,jdbcType=DECIMAL}
+  </delete>
+  
+  <delete id="deleteByUserId" parameterType="java.lang.Integer">
+    delete from AP
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </delete>
+  
+   <delete id="deleteByPrivId" parameterType="java.lang.Integer">
+    delete from AP
+    where PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="apId" parameterType="com.myproject.model.Ap" >
+    insert into AP (AP_ID, USER_ID, PRIVILEGE_ID, 
+      GRANTOR, OPERABLE, GRANTABLE
+      )
+    values (#{apId,jdbcType=DECIMAL}, #{userId,jdbcType=DECIMAL}, #{privilegeId,jdbcType=DECIMAL}, 
+      #{grantor,jdbcType=DECIMAL}, #{operable,jdbcType=DECIMAL}, #{grantable,jdbcType=DECIMAL}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.Ap" >
+    update AP
+    set USER_ID = #{userId,jdbcType=DECIMAL},
+      PRIVILEGE_ID = #{privilegeId,jdbcType=DECIMAL},
+      GRANTOR = #{grantor,jdbcType=DECIMAL},
+      OPERABLE = #{operable,jdbcType=DECIMAL},
+      GRANTABLE = #{grantable,jdbcType=DECIMAL}
+    where AP_ID = #{apId,jdbcType=DECIMAL}
+  </update>
+</mapper>

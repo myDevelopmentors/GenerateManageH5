@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.FuncTreeMapper" >
+  
+  <resultMap id="MenuResultMap" type="com.myproject.model.FuncTree" >
+    <id column="FUNC_TREE_ID" property="funcTreeId" jdbcType="DECIMAL" />
+    <result column="F_ID" property="fId" jdbcType="DECIMAL" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="ORD" property="ord" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="OPEN_ICON" property="openIcon" jdbcType="VARCHAR" />
+    <result column="CLOSE_ICON" property="closeIcon" jdbcType="VARCHAR" />
+    <result column="DISP" property="disp" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_CODE" property="privilegeCode" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ft.FUNC_TREE_ID, ft.F_ID, ft.CODE, ft.ORD, ft.NAME, ft.DESCRIPTION, ft.OPEN_ICON, ft.CLOSE_ICON, ft.DISP, ft.STATUS, 
+    ft.PRIVILEGE_CODE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="MenuResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from FUNC_TREE ft 
+    where FUNC_TREE_ID = #{funcTreeId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="getAllMenus" resultType="com.myproject.model.FuncTree">
+		select     
+		   ft.FUNC_TREE_ID as funcTreeId, 
+		   ft.F_ID as fId,
+		   ft.F_ID AS "parent.fId", 
+		   ft.CODE as code, 
+		   ft.ORD as ord, 
+		   ftb.NAME AS "parent.name", 
+		   ft.NAME as name, 
+		   ft.DESCRIPTION as description, 
+		   ft.OPEN_ICON as openIcon, 
+		   ft.CLOSE_ICON as closeIcon, 
+		   ft.DISP as disp, 
+		   ft.STATUS as status, 
+		   p.STATUS as "permission.status", 
+		   ft.PRIVILEGE_CODE as privilegeCode,p.LINK as "permission.link"   
+		   from FUNC_TREE ft   
+		left join FUNC_TREE ftb on ftb.FUNC_TREE_ID = ft.F_ID 
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE 
+		order by ft.ORD
+		
+  </select>
+  
+  <select id="getFuncTree" resultType="com.myproject.model.FuncTree">
+		select ft.FUNC_TREE_ID as funcTreeId, 
+		       ft.F_ID as fId,
+		       ft.CODE as code,
+		       ft.ORD as ord, 
+		       ft.NAME as name, 
+		       ft.DESCRIPTION as description,
+		       ft.OPEN_ICON as openIcon,
+		       ft.CLOSE_ICON as closeIcon, 
+		       ft.DISP as disp, 
+		       ft.STATUS as status,p.LINK as "permission.link"   
+		from FUNC_TREE ft
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE 
+		order by ord   
+  </select>
+  
+  <select id="selectWithPermissionByFuncTreeId" resultType="com.myproject.model.FuncTree">
+  		select ft.FUNC_TREE_ID as funcTreeId, 
+		       ft.F_ID as fId,
+		       ft.CODE as code,
+		       ft.ORD as ord, 
+		       ft.NAME as name, 
+		       ft.DESCRIPTION as description,
+		       ft.OPEN_ICON as openIcon,
+		       ft.CLOSE_ICON as closeIcon, 
+		       ft.DISP as disp, 
+		       ft.STATUS as status,p.LINK as "permission.link"   
+		from FUNC_TREE ft
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE where FUNC_TREE_ID = #{funcTreeId,jdbcType=DECIMAL} 
+  </select>
+  
+  <select id="findMenusByUserId" resultType="com.myproject.model.FuncTree" parameterType="java.lang.Integer" >
+		select 
+		   ft.FUNC_TREE_ID as funcTreeId, 
+				   ft.F_ID as fId,
+				   ft.F_ID AS "parent.fId", 
+				   ft.CODE as code, 
+				   ft.ORD as ord, 
+				   ft.NAME AS "parent.name", 
+				   ft.NAME as name, 
+				   ft.DESCRIPTION as description, 
+				   ft.OPEN_ICON as openIcon, 
+				   ft.CLOSE_ICON as closeIcon, 
+				   ft.DISP as disp, 
+				   ft.STATUS as status, 
+				   ft.PRIVILEGE_CODE as privilegeCode,"" as "permission.link"   
+		from FUNC_TREE ft   
+		left join FUNC_TREE ftb on ftb.FUNC_TREE_ID = ft.F_ID 
+		where ISNULL(ft.F_ID)
+		union 
+		select     
+ 	   	   ft.FUNC_TREE_ID as funcTreeId, 
+		   ft.F_ID as fId,
+		   ft.F_ID AS "parent.fId", 
+		   ft.CODE as code, 
+		   ft.ORD as ord, 
+		   ftb.NAME AS "parent.name", 
+		   ft.NAME as name, 
+		   ft.DESCRIPTION as description, 
+		   ft.OPEN_ICON as openIcon, 
+		   ft.CLOSE_ICON as closeIcon, 
+		   ft.DISP as disp, 
+		   ft.STATUS as status, 
+		   ft.PRIVILEGE_CODE as privilegeCode,p.LINK as "permission.link"       
+		from FUNC_TREE ft   
+		left join FUNC_TREE ftb on ftb.FUNC_TREE_ID = ft.F_ID 
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE 
+		left join ROLE_PRIV rp on rp.PRIVILEGE_ID = p.PRIVILEGE_ID
+		left join AR ar on ar.ROLE_ID = rp.ROLE_ID
+		left join USER_ACCOUNT ua on ua.USER_ID = ar.USER_ID  
+		where ua.USER_ID = #{userId,jdbcType=DECIMAL} 
+		union 
+		select     
+		  ft.FUNC_TREE_ID as funcTreeId, 
+		  ft.F_ID as fId,
+		  ft.F_ID AS "parent.fId", 
+		  ft.CODE as code, 
+		  ft.ORD as ord, 
+		  ftb.NAME AS "parent.name", 
+		  ft.NAME as name, 
+		  ft.DESCRIPTION as description, 
+		  ft.OPEN_ICON as openIcon, 
+		  ft.CLOSE_ICON as closeIcon, 
+		  ft.DISP as disp, 
+		  ft.STATUS as status, 
+		  ft.PRIVILEGE_CODE as privilegeCode,p.LINK as "permission.link"         
+		from FUNC_TREE ft  
+		left join FUNC_TREE ftb on ftb.FUNC_TREE_ID = ft.F_ID 
+		left join PRIVILEGE p on ft.PRIVILEGE_CODE = p.PRIVILEGE_CODE 
+		left join AP ap on p.PRIVILEGE_ID = ap.PRIVILEGE_ID 
+		left join USER_ACCOUNT ua on ap.USER_ID = ua.USER_ID  
+		where ua.USER_ID = #{userId,jdbcType=DECIMAL} 
+		order by ORD	   
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from FUNC_TREE
+    where FUNC_TREE_ID = #{funcTreeId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" useGeneratedKeys="true" keyProperty="funcTreeId" parameterType="com.myproject.model.FuncTree" >
+    insert into FUNC_TREE (FUNC_TREE_ID, F_ID, CODE, 
+      ORD, NAME, DESCRIPTION, 
+      OPEN_ICON, CLOSE_ICON, DISP, 
+      STATUS, PRIVILEGE_CODE)
+    values (#{funcTreeId,jdbcType=DECIMAL}, #{fId,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR}, 
+      #{ord,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{openIcon,jdbcType=VARCHAR}, #{closeIcon,jdbcType=VARCHAR}, #{disp,jdbcType=DECIMAL}, 
+      #{status,jdbcType=DECIMAL}, #{privilegeCode,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.FuncTree" >
+    update FUNC_TREE
+    set F_ID = #{fId,jdbcType=DECIMAL},
+      CODE = #{code,jdbcType=VARCHAR},
+      ORD = #{ord,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      OPEN_ICON = #{openIcon,jdbcType=VARCHAR},
+      CLOSE_ICON = #{closeIcon,jdbcType=VARCHAR},
+      DISP = #{disp,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=DECIMAL},
+      PRIVILEGE_CODE = #{privilegeCode,jdbcType=VARCHAR}
+    where FUNC_TREE_ID = #{funcTreeId,jdbcType=DECIMAL}
+  </update>
+  
+</mapper>

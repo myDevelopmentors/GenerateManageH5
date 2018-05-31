@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.myproject.dao.RolePrivMapper" >
+  <resultMap id="BaseResultMap" type="com.myproject.model.RolePriv" >
+    <id column="ROLE_PRIV_ID" property="rolePrivId" jdbcType="INTEGER" />
+    <result column="ROLE_ID" property="roleId" jdbcType="INTEGER" />
+    <result column="PRIVILEGE_ID" property="privilegeId" jdbcType="INTEGER" />
+    <result column="OPERABLE" property="operable" jdbcType="INTEGER" />
+    <result column="GRANTABLE" property="grantable" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ROLE_PRIV_ID, ROLE_ID, PRIVILEGE_ID, OPERABLE, GRANTABLE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ROLE_PRIV
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ROLE_PRIV
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByRoleId" parameterType="java.lang.Short">
+     delete from ROLE_PRIV
+  	 where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" parameterType="com.myproject.model.RolePriv" >
+    insert into ROLE_PRIV (ROLE_PRIV_ID, ROLE_ID, PRIVILEGE_ID, 
+      OPERABLE, GRANTABLE)
+    values (#{rolePrivId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{privilegeId,jdbcType=INTEGER}, 
+      #{operable,jdbcType=INTEGER}, #{grantable,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="com.myproject.model.RolePriv" >
+    update ROLE_PRIV
+    set ROLE_ID = #{roleId,jdbcType=INTEGER},
+      PRIVILEGE_ID = #{privilegeId,jdbcType=INTEGER},
+      OPERABLE = #{operable,jdbcType=INTEGER},
+      GRANTABLE = #{grantable,jdbcType=INTEGER}
+    where ROLE_PRIV_ID = #{rolePrivId,jdbcType=INTEGER}
+  </update>
+</mapper>
